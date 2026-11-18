@@ -7,6 +7,7 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import root_mean_squared_error
 from db_config import get_connection
 import joblib
+import Path
 import warnings
 
 warnings.filterwarnings("ignore", message="pandas only supports SQLAlchemy connectable")
@@ -229,6 +230,9 @@ def main():
 
             # <-- Save the model to disk
             model_filename = f"models/{symbol}_rf.joblib"
+
+            # Make the directory if it doesn't exist
+            Path(model_filename).parent.mkdir(parents=True, exist_ok=True)
             joblib.dump(model, model_filename)
             logging.info(f"Saved {symbol} model to {model_filename}")
 
