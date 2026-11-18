@@ -44,3 +44,32 @@ An end-to-end financial data pipeline, relational analytics database, and intera
 1. 📦 **Install required Python dependencies:**
    ```bash
    pip install -r requirements.txt
+   ```
+2. **Install PostgreSql: Update the .env file with you database configuration**
+
+3. **Initialize the PostgreSQL database and apply the schema:**
+   ```powershell
+   # Windows
+   .\setup_pipeline.ps1
+   ```
+
+4. **Run the ETL ingestion and walk-forward backtesting engine:**
+   ```powershell
+   python etl_ingest.py
+   ```
+   ```powershell
+   python backtest_engine.py
+   ```
+
+5. **Verify pipeline health and unit tests:** 
+   ```powershell
+   pytest test_pipeline.py -v
+   ```
+   ```powershell
+   python health_check.py
+   ```
+
+6. **Launch the interactive reporting dashboard:**
+   ```powershell
+   streamlit run app.py
+   ```
