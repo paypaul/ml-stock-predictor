@@ -60,12 +60,6 @@
         "exchange": "NASDAQ"
     },
     {
-        "symbol": "BRK.B",
-        "name": "Berkshire Hathaway Inc. Class B",
-        "sector": "Financials",
-        "exchange": "NYSE"
-    },
-    {
         "symbol": "TSLA",
         "name": "Tesla, Inc.",
         "sector": "Consumer Discretionary",

@@ -6,6 +6,7 @@ import yfinance as yf
 from psycopg2.extras import execute_values
 from db_config import get_connection
 import warnings
+import json
 
 warnings.filterwarnings("ignore", message="pandas only supports SQLAlchemy connectable")
 
@@ -14,13 +15,18 @@ logging.basicConfig(
     format="%(asctime)s [%(levelname)s] %(message)s"
 )
 
-TARGET_TICKERS = [
+DEMO_TICKERS = [
     {"symbol": "SPY", "name": "SPDR S&P 500 ETF Trust", "sector": "Index ETF", "exchange": "NYSE"},
     {"symbol": "AAPL", "name": "Apple Inc.", "sector": "Technology", "exchange": "NASDAQ"},
     {"symbol": "MSFT", "name": "Microsoft Corp.", "sector": "Technology", "exchange": "NASDAQ"},
     {"symbol": "LMT", "name": "Lockheed Martin Corp.", "sector": "Aerospace & Defense", "exchange": "NYSE"},
     {"symbol": "GD", "name": "General Dynamics Corp.", "sector": "Aerospace & Defense", "exchange": "NYSE"},
 ]
+
+with open("sp500_tickers.json", "r", encoding="utf-8") as file:
+    sp500 = json.load(file)
+
+TARGET_TICKERS = sp500 or DEMO_TICKERS
 
 def upsert_ticker_metadata(conn, ticker_info: dict) -> int:
     """Upserts ticker metadata and returns the primary key ticker_id."""
