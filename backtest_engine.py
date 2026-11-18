@@ -7,7 +7,7 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import root_mean_squared_error
 from db_config import get_connection
 import joblib
-import Path
+from pathlib import Path
 import warnings
 
 warnings.filterwarnings("ignore", message="pandas only supports SQLAlchemy connectable")
