@@ -1,4 +1,4 @@
-name: Enterprise Equity Analytics CI
+name: Machine Learning Stock Predictor
 
 on:
   push:
