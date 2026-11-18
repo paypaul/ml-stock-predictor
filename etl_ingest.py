@@ -3,7 +3,11 @@ import logging
 from datetime import datetime
 import pandas as pd
 import yfinance as yf
+from psycopg2.extras import execute_values
 from db_config import get_connection
+import warnings
+
+warnings.filterwarnings("ignore", message="pandas only supports SQLAlchemy connectable")
 
 logging.basicConfig(
     level=logging.INFO,

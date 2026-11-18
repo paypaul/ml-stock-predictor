@@ -37,7 +37,7 @@ jobs:
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pandas numpy scikit-learn yfinance psycopg2-binary pytest streamlit plotly dotenv
+          pip install pandas numpy scikit-learn yfinance psycopg2-binary pytest streamlit plotly dotenv joblib
 
       - name: Verify Relational Schema & Analytical Views
         env:

@@ -5,6 +5,9 @@ import streamlit as st
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from db_config import get_connection
+import warnings
+
+warnings.filterwarnings("ignore", message="pandas only supports SQLAlchemy connectable")
 
 st.set_page_config(
     page_title="Enterprise Equity Forecasting & Risk Portal",

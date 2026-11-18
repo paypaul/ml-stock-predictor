@@ -6,6 +6,10 @@ from psycopg2.extras import execute_values
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import root_mean_squared_error
 from db_config import get_connection
+import joblib
+import warnings
+
+warnings.filterwarnings("ignore", message="pandas only supports SQLAlchemy connectable")
 
 logging.basicConfig(
     level=logging.INFO,
@@ -109,13 +113,14 @@ def calculate_risk_metrics(results_df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def run_walk_forward_backtest(df: pd.DataFrame) -> tuple[pd.DataFrame, dict]:
+def run_walk_forward_backtest(df: pd.DataFrame) -> tuple[pd.DataFrame, dict, RandomForestRegressor]:
     """Executes an expanding-window walk-forward training and prediction loop."""
     if len(df) <= INITIAL_TRAIN_SIZE:
         raise ValueError(f"Insufficient rows ({len(df)}) for initial training window ({INITIAL_TRAIN_SIZE}).")
 
     predictions = []
     latest_importances = {}
+    model = None
 
     for start_idx in range(INITIAL_TRAIN_SIZE, len(df), RETRAIN_STEP):
         end_idx = min(start_idx + RETRAIN_STEP, len(df))
@@ -153,7 +158,7 @@ def run_walk_forward_backtest(df: pd.DataFrame) -> tuple[pd.DataFrame, dict]:
 
     results_df = pd.DataFrame(predictions)
     evaluated_df = calculate_risk_metrics(results_df)
-    return evaluated_df, latest_importances
+    return evaluated_df, latest_importances, model
 
 
 def persist_backtest_results(conn, evaluated_df: pd.DataFrame, ticker_id: int, importances: dict):
@@ -217,9 +222,15 @@ def main():
             raw_df = fetch_analytics_data(conn, symbol)
             feat_df = engineer_features(raw_df)
 
-            evaluated_df, importances = run_walk_forward_backtest(feat_df)
+            # Unpack the returned model
+            evaluated_df, importances, model = run_walk_forward_backtest(feat_df)
             ticker_id = int(evaluated_df["ticker_id"].iloc[0])
             persist_backtest_results(conn, evaluated_df, ticker_id, importances)
+
+            # <-- Save the model to disk
+            model_filename = f"models/{symbol}_rf.joblib"
+            joblib.dump(model, model_filename)
+            logging.info(f"Saved {symbol} model to {model_filename}")
 
             sharpe = evaluated_df["sharpe_ratio"].iloc[-1]
             max_dd = evaluated_df["max_drawdown"].iloc[-1]

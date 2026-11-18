@@ -3,19 +3,14 @@ import sys
 import logging
 import pandas as pd
 from db_config import get_connection
+import warnings
+
+warnings.filterwarnings("ignore", message="pandas only supports SQLAlchemy connectable")
 
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(message)s"
 )
-
-DB_CONFIG = {
-    "host": os.environ.get("DB_HOST", "localhost"),
-    "port": int(os.environ.get("DB_PORT", 5432)),
-    "dbname": os.environ.get("DB_NAME", "stock_analytics"),
-    "user": os.environ.get("DB_USER", "postgres"),
-    "password": os.environ.get("DB_PASSWORD", "pass1234"),
-}
 
 MAX_STALE_DAYS = 5
 MAX_DAILY_MOVE_PCT = 0.35
@@ -81,7 +76,7 @@ def check_anomalous_price_spikes(conn) -> list[str]:
 
 def main():
     logging.info("Starting automated data-health and operational verification...")
-    conn = get_connection
+    conn = get_connection()
 
     try:
         all_issues = (
